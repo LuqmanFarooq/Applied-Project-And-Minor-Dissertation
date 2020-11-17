@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';// import for google sign
+
+//enable us to use no. of methods eg. login/logout
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 //displaying authenticated screen for authenticated users and splash screen for unauthenticated users with the help of state
 class Home extends StatefulWidget {
@@ -10,6 +14,30 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   //displaying auth screen when its false and unauth when its true
   bool isAuth = false;
+
+//active listener to check user signIn, with firebase using google signIn.. 
+  @override
+  void initState() { 
+    super.initState();
+    //check user
+    googleSignIn.onCurrentUserChanged.listen((account) {
+      if(account != null ) {
+        print('User Signed in!: $account');
+        setState(() {
+          isAuth = true;
+        });
+        //otherwise
+      }else{
+          setState(() {
+          isAuth = false;
+          });
+      }
+     });
+  }
+  //login function navigate loginPage
+  login() {
+    googleSignIn.signIn();
+  }
 
   Widget buildAuthScreen() {
     return Text("Authenticated");
@@ -23,7 +51,12 @@ class _HomeState extends State<Home> {
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
-            colors: [Colors.teal, Colors.purple],
+            colors: [
+              Theme.of(context).accentColor,
+              Theme.of(context).primaryColor,
+              
+              ],
+
           ),
         ),
         alignment: Alignment.center,
@@ -38,7 +71,7 @@ class _HomeState extends State<Home> {
             ),
             GestureDetector(
               // checking if button works
-              onTap: () => print("tapped"),
+              onTap: login,
               child: Container(
                 width: 260.0,
                 height: 60.0,
