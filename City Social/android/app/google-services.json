@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1037560087347-kpcq9iftelc3ml9lhsjh17v9amunkmpf.apps.googleusercontent.com",
+          "client_id": "1037560087347-004e9e0fuh1e4kkaaqm9jr744ribikcc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.gmit.CitySocial",
-            "certificate_hash": "52829c32448760c6331707cb71095aec6ff2ab37"
+            "certificate_hash": "d8167e89f4f1d5cee09156ca6d88134cac546f44"
           }
         },
         {
@@ -38,6 +38,13 @@
             {
               "client_id": "1037560087347-dhi20j6huqnj94shhk4gl23jpfc4rk9b.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1037560087347-8a3mg4eul1gql6cdfioekls61vljcuno.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gmit.CitySocial"
+              }
             }
           ]
         }

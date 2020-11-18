@@ -1,4 +1,4 @@
-package com.example.fluttershare;
+package com.example.CitySocial;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
