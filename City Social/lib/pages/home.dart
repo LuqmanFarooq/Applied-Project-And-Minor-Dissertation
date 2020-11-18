@@ -19,28 +19,52 @@ class _HomeState extends State<Home> {
   @override
   void initState() { 
     super.initState();
-    //check user
+    
     googleSignIn.onCurrentUserChanged.listen((account) {
+      handleSignIn(account);
+      
+      //or  error in authentication 
+     }, onError:  (err) {
+       print('Error Siging in : $err');
+     });
+     //Reauthinticate user when app is open and resolve future 
+     googleSignIn.signInSilently(suppressErrors: false ).then((account) {
+       handleSignIn(account);
+
+     }).catchError((err){
+       print('Error Siging in : $err');
+     });
+  } 
+  handleSignIn(GoogleSignInAccount account){
+    //if Detect when user Signed 
       if(account != null ) {
         print('User Signed in!: $account');
         setState(() {
           isAuth = true;
         });
-        //otherwise
+        //else  detect when user Signed out
       }else{
           setState(() {
           isAuth = false;
           });
       }
-     });
-  }
-  //login function navigate loginPage
-  login() {
-    googleSignIn.signIn();
+    
   }
 
-  Widget buildAuthScreen() {
-    return Text("Authenticated");
+  //navigate loginPage
+   login() {
+    googleSignIn.signIn();
+  }
+//navigate login
+  logout() {
+    googleSignIn.signOut();
+  }
+
+ Widget buildAuthScreen() {
+    return RaisedButton(
+      child: Text('Logout'),
+      onPressed: logout,
+    );
   }
 
   // return type of scafold widget with signin button created from signinpng image
