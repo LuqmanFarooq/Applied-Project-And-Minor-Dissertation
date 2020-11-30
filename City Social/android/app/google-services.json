@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1037560087347-grs9hosj1c0braccitctihbtbuh3qmhe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gmit.CitySocial",
+            "certificate_hash": "fe9bef78692126a905a199cbc33ff9a578ed5ee1"
+          }
+        },
+        {
           "client_id": "1037560087347-004e9e0fuh1e4kkaaqm9jr744ribikcc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
