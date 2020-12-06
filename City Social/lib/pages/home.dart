@@ -1,14 +1,18 @@
 import 'package:CitySocial/pages/activity_feed.dart';
 import 'package:CitySocial/pages/profile.dart';
 import 'package:CitySocial/pages/search.dart';
-import 'package:CitySocial/pages/timeline.dart';
-import 'package:CitySocial/pages/upload.dart';
+import 'package:CitySocial/pages/upload.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart'; // import for google sign
+import 'package:google_sign_in/google_sign_in.dart';
+import 'create_account.dart'; // import for google sign
 
 //enable us to use no. of methods eg. login/logout
 final GoogleSignIn googleSignIn = GoogleSignIn();
+
+final usersRef = Firestore.instance.collection('users');
+final DateTime timestamp = DateTime.now();
 
 //displaying authenticated screen for authenticated users and splash screen for unauthenticated users with the help of state
 class Home extends StatefulWidget {
@@ -46,10 +50,12 @@ class _HomeState extends State<Home> {
     });
   }
 
-  handleSignIn(GoogleSignInAccount account) {
-    //if Detect when user Signed
+    handleSignIn(GoogleSignInAccount account) {
+      //if Detect when user SignIn
     if (account != null) {
-      print('User Signed in!: $account');
+      //execute the function in fireStore
+      createUserInFirestore();
+
       setState(() {
         isAuth = true;
       });
@@ -57,6 +63,28 @@ class _HomeState extends State<Home> {
     } else {
       setState(() {
         isAuth = false;
+      });
+    }
+  }
+    createUserInFirestore() async {
+    // 1) check if user exists in users collection in database (according to their id)
+    final GoogleSignInAccount user = googleSignIn.currentUser;
+    final DocumentSnapshot doc = await usersRef.document(user.id).get();
+
+    if (!doc.exists) {
+      // 2) if the user doesn't exist, then we want to take them to the create account page
+      final username = await Navigator.push(
+          context, MaterialPageRoute(builder: (context) => CreateAccount()));
+
+      // 3) get username from create account, use it to make new user document in users collection
+      usersRef.document(user.id).setData({
+        "id": user.id,
+        "username": username,
+        "photoUrl": user.photoUrl,
+        "email": user.email,
+        "displayName": user.displayName,
+        "bio": "",
+        "timestamp": timestamp
       });
     }
   }
@@ -100,7 +128,11 @@ class _HomeState extends State<Home> {
       body: PageView(
         // building a navigation bar with buttons
         children: <Widget>[
-          Timeline(),
+         // Timeline(),
+         RaisedButton(
+      child: Text('Logout'),
+      onPressed: logout,
+    ),
           ActivityFeed(),
           Upload(),
           Search(),
@@ -138,10 +170,6 @@ class _HomeState extends State<Home> {
         ], // providing icons so user can click on to switch page
       ),
     );
-    /*return RaisedButton(
-      child: Text('Logout'),
-      onPressed: logout,
-    );*/
   }
 
   // return type of scafold widget with signin button created from signinpng image

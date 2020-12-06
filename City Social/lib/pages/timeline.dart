@@ -1,6 +1,8 @@
-import 'package:CitySocial/widgets/header.dart';
-import 'package:CitySocial/widgets/progress.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:CitySocial/widgets/header.dart';
+
+final usersRef = Firestore.instance.collection('users');
 
 class Timeline extends StatefulWidget {
   @override
@@ -10,10 +12,12 @@ class Timeline extends StatefulWidget {
 class _TimelineState extends State<Timeline> {
   @override
   Widget build(context) {
+	// for app bar we are using aur header widget located in widgets folder
     return Scaffold(
-      // for app bar we are using aur header widget located in widgets folder
       appBar: header(context, isAppTitile: true),
-      body: circularProgress(),
+      body: Text('Timeline'),
     );
   }
 }
+
+
