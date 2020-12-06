@@ -84,11 +84,14 @@ class _HomeState extends State<Home> {
       this.pageIndex = pageIndex;
     });
   }
-
 // onTap function responsible for changing the page in pageview
   onTap(int pageIndex) {
-    pageController.jumpToPage(
+    pageController.animateToPage( 
       pageIndex,
+      //duration parameter
+      duration: Duration(milliseconds: 300),
+      //in curve argument easeInOut for A cubic animation curve that starts slowly, speeds up, and then ends slowly.
+      curve: Curves.easeInOut, 
     );
   }
 
