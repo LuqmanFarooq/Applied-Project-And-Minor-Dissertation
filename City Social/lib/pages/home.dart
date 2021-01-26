@@ -1,7 +1,7 @@
 import 'package:CitySocial/pages/activity_feed.dart';
 import 'package:CitySocial/pages/profile.dart';
 import 'package:CitySocial/pages/search.dart';
-import 'package:CitySocial/pages/upload.dart'; 
+import 'package:CitySocial/pages/upload.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ import 'create_account.dart'; // import for google sign
 //enable us to use no. of methods eg. login/logout
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
-final usersRef = Firestore.instance.collection('users');
+final usersRef = Firestore.instance.collection("users");
 final DateTime timestamp = DateTime.now();
 
 //displaying authenticated screen for authenticated users and splash screen for unauthenticated users with the help of state
@@ -50,8 +50,8 @@ class _HomeState extends State<Home> {
     });
   }
 
-    handleSignIn(GoogleSignInAccount account) {
-      //if Detect when user SignIn
+  handleSignIn(GoogleSignInAccount account) {
+    //if Detect when user SignIn
     if (account != null) {
       //execute the function in fireStore
       createUserInFirestore();
@@ -66,7 +66,8 @@ class _HomeState extends State<Home> {
       });
     }
   }
-    createUserInFirestore() async {
+
+  createUserInFirestore() async {
     // 1) check if user exists in users collection in database (according to their id)
     final GoogleSignInAccount user = googleSignIn.currentUser;
     final DocumentSnapshot doc = await usersRef.document(user.id).get();
@@ -112,14 +113,15 @@ class _HomeState extends State<Home> {
       this.pageIndex = pageIndex;
     });
   }
+
 // onTap function responsible for changing the page in pageview
   onTap(int pageIndex) {
-    pageController.animateToPage( 
+    pageController.animateToPage(
       pageIndex,
       //duration parameter
       duration: Duration(milliseconds: 300),
       //in curve argument easeInOut for A cubic animation curve that starts slowly, speeds up, and then ends slowly.
-      curve: Curves.easeInOut, 
+      curve: Curves.easeInOut,
     );
   }
 
@@ -128,11 +130,11 @@ class _HomeState extends State<Home> {
       body: PageView(
         // building a navigation bar with buttons
         children: <Widget>[
-         // Timeline(),
-         RaisedButton(
-      child: Text('Logout'),
-      onPressed: logout,
-    ),
+          // Timeline(),
+          RaisedButton(
+            child: Text('Logout'),
+            onPressed: logout,
+          ),
           ActivityFeed(),
           Upload(),
           Search(),
