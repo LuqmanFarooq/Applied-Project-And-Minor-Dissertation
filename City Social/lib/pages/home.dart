@@ -1,3 +1,4 @@
+import 'package:CitySocial/models/user.dart';
 import 'package:CitySocial/pages/activity_feed.dart';
 import 'package:CitySocial/pages/profile.dart';
 import 'package:CitySocial/pages/search.dart';
@@ -13,6 +14,8 @@ final GoogleSignIn googleSignIn = GoogleSignIn();
 
 final usersRef = Firestore.instance.collection("users");
 final DateTime timestamp = DateTime.now();
+// varaible to store userdata
+User currentUser;
 
 //displaying authenticated screen for authenticated users and splash screen for unauthenticated users with the help of state
 class Home extends StatefulWidget {
@@ -70,7 +73,7 @@ class _HomeState extends State<Home> {
   createUserInFirestore() async {
     // 1) check if user exists in users collection in database (according to their id)
     final GoogleSignInAccount user = googleSignIn.currentUser;
-    final DocumentSnapshot doc = await usersRef.document(user.id).get();
+    DocumentSnapshot doc = await usersRef.document(user.id).get();
 
     if (!doc.exists) {
       // 2) if the user doesn't exist, then we want to take them to the create account page
@@ -87,7 +90,13 @@ class _HomeState extends State<Home> {
         "bio": "",
         "timestamp": timestamp
       });
+      //refetching the doc and updating
+      doc = await usersRef.document(user.id).get();
     }
+
+    currentUser = User.fromDocument(doc);
+    print(currentUser);
+    print(currentUser.username);
   }
 
   @override

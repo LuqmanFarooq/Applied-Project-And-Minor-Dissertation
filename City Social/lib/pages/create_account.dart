@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:CitySocial/widgets/header.dart';
 
@@ -7,18 +9,29 @@ class CreateAccount extends StatefulWidget {
 }
 
 class _CreateAccountState extends State<CreateAccount> {
+  // var for snackbar
+  final _scafoleKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   String username;
 
   submit() {
-    _formKey.currentState.save();
-    Navigator.pop(context, username);
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      SnackBar snackBar = SnackBar(content: Text("Welcome $username!"));
+      _scafoleKey.currentState.showSnackBar(snackBar);
+      Timer(Duration(seconds: 2), () {
+        Navigator.pop(context, username);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext parentContext) {
     return Scaffold(
-      appBar: header(context, titleText: "Set up your profile"),
+      key: _scafoleKey,
+      appBar: header(context,
+          titleText: "Set up your profile", removeBackButton: true),
       body: ListView(
         children: <Widget>[
           Container(
@@ -38,13 +51,23 @@ class _CreateAccountState extends State<CreateAccount> {
                   child: Container(
                     child: Form(
                       key: _formKey,
+                      autovalidateMode: AutovalidateMode.always,
                       child: TextFormField(
+                        validator: (val) {
+                          if (val.trim().length < 5 || val.isEmpty) {
+                            return 'Username too short!';
+                          } else if (val.trim().length > 18) {
+                            return 'Username too Long!';
+                          } else {
+                            return null;
+                          }
+                        },
                         onSaved: (val) => username = val,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Username",
                           labelStyle: TextStyle(fontSize: 15.0),
-                          hintText: "Must be at least 3 characters",
+                          hintText: "Must be at least 5 characters",
                         ),
                       ),
                     ),

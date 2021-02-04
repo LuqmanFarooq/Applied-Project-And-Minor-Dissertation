@@ -7,8 +7,8 @@ class User {
   final String email;
   final String displayName;
   final String bio;
-  final String timestamp;
 
+  // indicating how users are initialized
   User({
     this.id,
     this.username,
@@ -16,12 +16,11 @@ class User {
     this.email,
     this.displayName,
     this.bio,
-    this.timestamp,
   });
-
+// factory method for deserialization of the data and is responsible for taking documents snapshot and turning into an instance of user class.
   factory User.fromDocument(DocumentSnapshot doc) {
     return User(
-      id: doc.documentID,
+      id: doc['id'],
       email: doc['email'],
       username: doc['username'],
       photoUrl: doc['photoUrl'],
