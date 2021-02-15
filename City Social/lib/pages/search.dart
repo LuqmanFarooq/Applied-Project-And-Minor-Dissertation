@@ -1,6 +1,11 @@
+// ignore: avoid_web_libraries_in_flutter
+
+//import 'dart:html';
+
 import 'package:CitySocial/models/user.dart';
 import 'package:CitySocial/pages/home.dart';
 import 'package:CitySocial/widgets/progress.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,13 +16,15 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
+
 // to clear the text in the input field
   TextEditingController searchController = TextEditingController();
 
   Future<QuerySnapshot> searchResultsFuture;
-
+// created handleSearch funtion going to take userRef from home after import 
   handleSearch(String query) {
     Future<QuerySnapshot> users = usersRef
+    //execute string query
         .where("displayName", isGreaterThanOrEqualTo: query)
         .getDocuments();
     setState(() {
@@ -48,6 +55,7 @@ class _SearchState extends State<Search> {
             onPressed: clearSearch,
           ),
         ),
+        //function  associated with onFieldSubmitted when formFieldSubmitted with given text typed in to it
         onFieldSubmitted: handleSearch,
       ),
     );
@@ -81,7 +89,7 @@ class _SearchState extends State<Search> {
       ),
     );
   }
-
+//execute buildSearchResult which passes searchResultsFuture
   buildSearchResults() {
     // we are resolving our search results feature with our future builder
     return FutureBuilder(
@@ -90,13 +98,14 @@ class _SearchState extends State<Search> {
           if (!snapshot.hasData) {
             return circularProgress();
           }
-          // list of text widgets
-          List<Text> searchResults = [];
+          //doucuments into list of text widgets
+          List<UserResult> searchResults = [];
           snapshot.data.documents.forEach((doc) {
             // for each user document that we get we need to deserialize it
             User user = User.fromDocument(doc);
+            UserResult searchResult =UserResult(user);
             // wrapping into text widget and  addding the result to the searchResults list
-            searchResults.add(Text(user.username));
+            searchResults.add(searchResult);
           });
           // returning listview with its chidren being our search results
           return ListView(
@@ -118,8 +127,34 @@ class _SearchState extends State<Search> {
 
 // this class is for showing the results that come back from a given search
 class UserResult extends StatelessWidget {
+  //to accept user varaiable to UserResult
+  final User user;
+  UserResult(this.user);
   @override
   Widget build(BuildContext context) {
-    return Text("User Result");
+    //insted of text widget retur conatiner with its own properties
+    return Container(
+      color: Theme.of(context).primaryColor.withOpacity(0.7),
+      child: Column(children: <Widget>[
+        GestureDetector(
+          //onTap can be used as userProfile page when created
+          onTap: () => print('tapped'),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.grey,
+              //used CachedNetworkImagedProvider instead of NetworkImage widget to save and display 
+              backgroundImage: CachedNetworkImageProvider(user.photoUrl),
+            ),
+            title: Text(user.displayName, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+            subtitle: Text(user.username, style: TextStyle(color: Colors.white),),
+          ),
+        ),
+        //divider from the above single result to multiple result from search incase
+        Divider(
+          height: 2.0,
+          color: Colors.white54,
+        ),
+      ],),
+    );
   }
 }
