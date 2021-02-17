@@ -8,7 +8,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'create_account.dart'; // import for google sign
+import 'package:CitySocial/pages/create_account.dart';
+
+
+// import for google sign
+import 'create_account.dart'; 
 
 //enable us to use no. of methods eg. login/logout
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -151,7 +155,8 @@ class _HomeState extends State<Home> {
           //pass to currentUser argument
           Upload(currentUser: currentUser),
           Search(),
-          Profile(),
+          //first check current user is not null and only in that case we want id of it
+          Profile(profileId: currentUser?.id),
         ],
         // adding a controller which enables us to switch between controller
         controller: pageController,
