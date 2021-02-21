@@ -1,3 +1,4 @@
+import 'package:CitySocial/pages/edit_profile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:CitySocial/models/user.dart';
@@ -7,7 +8,7 @@ import 'package:CitySocial/widgets/progress.dart';
 
 class Profile extends StatefulWidget {
   final String profileId;
-//get profile user information by passing user id in this class and fetching user database onit through home page 
+//get profile user information by passing user id in this class and fetching user database onit through home page
   Profile({this.profileId});
 
   @override
@@ -15,6 +16,8 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  final String currentUserId = currentUser?.id;
+
   Column buildCountColumn(String label, int count) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -39,9 +42,52 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  buildProfileButton() {
-    return Text("profile button");
+// to return edir profile page
+  editProfile() {
+    // passing context and making route using materialpageroute
+    Navigator.push(
+        // as we need to fetch the current user on the edit profile page so referencing current user id in EditProfile
+        context,
+        MaterialPageRoute(
+            builder: (context) => EditProfile(currentUserId: currentUserId)));
   }
+
+  Container buildButton({String text, Function function}) {
+    return Container(
+      padding: EdgeInsets.only(top: 2.0),
+      child: FlatButton(
+        onPressed: function,
+        child: Container(
+          width: 250.0,
+          height: 27.0,
+          child: Text(
+            text,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            border: Border.all(
+              color: Colors.blue,
+            ),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+        ),
+      ),
+    );
+  }
+
+  buildProfileButton() {
+    // on viewing user's own profile user should see edit profile button else follow or unfollow button
+    bool isProfileOwner = currentUserId == widget.profileId;
+    if (isProfileOwner) {
+      return buildButton(text: "Edit Profile", function: editProfile);
+    }
+  }
+
   //header
   buildProfileHeader() {
     //enable us to resolve future user info based on id using userRef from home
@@ -94,7 +140,7 @@ class _ProfileState extends State<Profile> {
                   ),
                 ],
               ),
-              
+
               Container(
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.only(top: 12.0),
