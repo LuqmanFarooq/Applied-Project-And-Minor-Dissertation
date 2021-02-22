@@ -14,14 +14,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as Im;
 import 'package:uuid/uuid.dart';
 
-
-
-
 class Upload extends StatefulWidget {
   final User currentUser;
-//pass to upload constructor 
-Upload({this.currentUser});
- 
+//pass to upload constructor
+  Upload({this.currentUser});
+
   @override
   _UploadState createState() => _UploadState();
 }
@@ -29,12 +26,12 @@ Upload({this.currentUser});
 class _UploadState extends State<Upload> {
   TextEditingController captionController = TextEditingController();
   TextEditingController locationController = TextEditingController();
- 
+
   File file;
 //for disabling post button bellow
-  bool isUploading = false; 
+  bool isUploading = false;
 //unique id stored
-String postId = Uuid().v4();
+  String postId = Uuid().v4();
 
 //the following function will lead to most bottom function build/builduploadform
   handleTakePhoto() async {
@@ -56,6 +53,7 @@ String postId = Uuid().v4();
       this.file = file;
     });
   }
+
 //from splash screen bring to bottom dialog which will lead to above state accordingly
   selectImage(parentContext) {
     return showDialog(
@@ -77,7 +75,8 @@ String postId = Uuid().v4();
           );
         });
   }
-//creating Splash Screen container which will lead to above selct image dialoge 
+
+//creating Splash Screen container which will lead to above selct image dialoge
   Container buildSplashScreen() {
     return Container(
       color: Theme.of(context).accentColor.withOpacity(0.6),
@@ -106,7 +105,7 @@ String postId = Uuid().v4();
     );
   }
 
-   clearImage() {
+  clearImage() {
     setState(() {
       //return to slpashScreen
       file = null;
@@ -114,68 +113,71 @@ String postId = Uuid().v4();
   }
 
   // to compress uploading fileSize in temporary Directory
-  compressImage () async{
-   final tempDir = await getTemporaryDirectory();
-   final path = tempDir.path;
+  compressImage() async {
+    final tempDir = await getTemporaryDirectory();
+    final path = tempDir.path;
 
 //https://stackoverflow.com/questions/46515679/flutter-firebase-compression-before-upload-image
-   Im.Image imageFile = Im.decodeImage(file.readAsBytesSync());
-   final compressedImageFile= File ('$path/img_$postId.jpg')
-    ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 85));
+    Im.Image imageFile = Im.decodeImage(file.readAsBytesSync());
+    final compressedImageFile = File('$path/img_$postId.jpg')
+      ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 85));
     setState(() {
-          file = compressedImageFile;
-        });
+      file = compressedImageFile;
+    });
   }
- Future <String> uploadImage(imageFile) async {
-   StorageUploadTask uploadTask = storageRef.child("post_$postId.jpg").putFile(imageFile);
-  StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
-  String dowloadUrl =  await storageSnap.ref.getDownloadURL();
-  return dowloadUrl;
+
+  Future<String> uploadImage(imageFile) async {
+    StorageUploadTask uploadTask =
+        storageRef.child("post_$postId.jpg").putFile(imageFile);
+    StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
+    String dowloadUrl = await storageSnap.ref.getDownloadURL();
+    return dowloadUrl;
   }
-  createPostInFirestore({String mediaUrl, String location, String description  }){
-    // to add this post to post collection 
+
+  createPostInFirestore(
+      {String mediaUrl, String location, String description}) {
+    // to add this post to post collection
     postsRef
-    .document(widget.currentUser.id)
-    .collection("userPosts")
-    //linking to indivisual post
-    .document(postId)
-    .setData({
+        .document(widget.currentUser.id)
+        .collection("userPosts")
+        //linking to indivisual post
+        .document(postId)
+        .setData({
       "postId": postId,
       "ownerId": widget.currentUser.id,
-      "userName": widget.currentUser.username,
+      "username": widget.currentUser.username,
       "mediaUrl": mediaUrl,
       "description": description,
       "location": location,
       "timestamp": timestamp,
       "likes": {},
-
     });
-
   }
+
   // to enable uploading post
   handleSubmit() async {
     setState(() {
-          isUploading = true;
-        });
-        await compressImage();
-       String mediaUrl = await uploadImage(file);
-       createPostInFirestore(
-         mediaUrl: mediaUrl,
-         location: locationController.text,
-        description : captionController.text,
-       );
-       captionController.clear();
-       locationController.clear();
-       setState((){
-         file = null;
-         isUploading = false;
-         //new postId for every post 
-         postId = Uuid().v4();
-       });
-
+      isUploading = true;
+    });
+    await compressImage();
+    String mediaUrl = await uploadImage(file);
+    createPostInFirestore(
+      mediaUrl: mediaUrl,
+      location: locationController.text,
+      description: captionController.text,
+    );
+    captionController.clear();
+    locationController.clear();
+    setState(() {
+      file = null;
+      isUploading = false;
+      //new postId for every post
+      postId = Uuid().v4();
+    });
   }
-  // uploadState will take to buildUploadForm using scafold and required option, heading, buttons etc. 
-Scaffold buildUploadForm() {
+
+  // uploadState will take to buildUploadForm using scafold and required option, heading, buttons etc.
+  Scaffold buildUploadForm() {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white70,
@@ -188,7 +190,7 @@ Scaffold buildUploadForm() {
         ),
         actions: [
           FlatButton(
-            onPressed: isUploading? null : () => handleSubmit(),
+            onPressed: isUploading ? null : () => handleSubmit(),
             child: Text(
               "Post",
               style: TextStyle(
@@ -202,7 +204,7 @@ Scaffold buildUploadForm() {
       ),
       body: ListView(
         children: <Widget>[
-        //condition to show progressBar
+          //condition to show progressBar
           isUploading ? linearProgress() : Text(""),
           Container(
             height: 220.0,
@@ -282,17 +284,21 @@ Scaffold buildUploadForm() {
       ),
     );
   }
-  getUserLocation() async{ 
- Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
- List<Placemark> palcemarks = await Geolocator().placemarkFromCoordinates(position.latitude, position.longitude);
- Placemark placemark =palcemarks[0];
- String completeAddress = 
+
+  getUserLocation() async {
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    List<Placemark> palcemarks = await Geolocator()
+        .placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placemark = palcemarks[0];
+    String completeAddress =
         '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality} ${placemark.locality}, ${placemark.subAdministrativeArea}, ${placemark.administrativeArea} ${placemark.postalCode}, ${placemark.country}';
     print(completeAddress);
     String formattedAddress = "${placemark.locality}, ${placemark.country}";
     locationController.text = formattedAddress;
   }
- //if null
+
+  //if null
   @override
   Widget build(BuildContext context) {
     return file == null ? buildSplashScreen() : buildUploadForm();
