@@ -1,5 +1,6 @@
 import 'package:CitySocial/pages/edit_profile.dart';
 import 'package:CitySocial/widgets/post.dart';
+import 'package:CitySocial/widgets/post_Tile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:CitySocial/models/user.dart';
 import 'package:CitySocial/pages/home.dart';
 import 'package:CitySocial/widgets/header.dart';
 import 'package:CitySocial/widgets/progress.dart';
+import 'package:flutter_svg/svg.dart';
 
 class Profile extends StatefulWidget {
   final String profileId;
@@ -22,6 +24,7 @@ class _ProfileState extends State<Profile> {
   bool isLoading = false;
   int postCount = 0;
   List<Post> posts = [];
+  String postOrientation = "grid";
 // fetching posts
   @override
   void initState() {
@@ -211,9 +214,79 @@ class _ProfileState extends State<Profile> {
     if (isLoading) {
       return circularProgress();
     }
+    // if profile is empty we show empty splash screen
+    else if (posts.isEmpty) {
+      return Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SvgPicture.asset('assets/images/no_content.svg', height: 230.0),
+            Padding(
+              padding: EdgeInsets.only(top: 20.0),
+              child: Text(
+                "No Posts Yet!",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     // however when we have our data
-    return Column(
-      children: posts,
+    else if (postOrientation == "grid") {
+      List<GridTile> gridTiles = [];
+      posts.forEach((post) {
+        // serving as a child to grid tile widget
+        gridTiles.add(GridTile(child: PostTile(post)));
+      });
+      return GridView.count(
+        crossAxisCount: 3,
+        childAspectRatio: 1.0,
+        mainAxisSpacing: 1.5,
+        crossAxisSpacing: 1.5,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        children: gridTiles,
+      );
+    } else if (postOrientation == "list") {
+      return Column(
+        children: posts,
+      );
+    }
+  }
+
+// to set the post orientation togle value
+  setPostOrientation(String postOrientation) {
+    setState(() {
+      this.postOrientation = postOrientation;
+    });
+  }
+
+// to togle between listview or grid view of posts
+  buildTogglePostOrientation() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        IconButton(
+          onPressed: () => setPostOrientation("grid"),
+          icon: Icon(Icons.grid_on),
+          // to make the active button color using ternary opperator
+          color: postOrientation == 'grid'
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        ),
+        IconButton(
+          onPressed: () => setPostOrientation("list"),
+          icon: Icon(Icons.list),
+          color: postOrientation == 'list'
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        ),
+      ],
     );
   }
 
@@ -224,6 +297,8 @@ class _ProfileState extends State<Profile> {
       body: ListView(
         children: <Widget>[
           buildProfileHeader(),
+          Divider(),
+          buildTogglePostOrientation(),
           Divider(
             height: 0.0,
           ),
