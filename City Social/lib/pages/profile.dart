@@ -162,7 +162,9 @@ class _ProfileState extends State<Profile> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            buildProfileButton(),
+                            Flexible(
+                              child: buildProfileButton(),
+                            ),
                           ],
                         ),
                       ],
