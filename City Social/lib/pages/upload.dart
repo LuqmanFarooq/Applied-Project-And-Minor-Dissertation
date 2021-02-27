@@ -36,6 +36,7 @@ class _UploadState extends State<Upload> {
 //the following function will lead to most bottom function build/builduploadform
   handleTakePhoto() async {
     Navigator.pop(context);
+    // ignore: deprecated_member_use
     File file = await ImagePicker.pickImage(
       source: ImageSource.camera,
       maxHeight: 675,
@@ -48,6 +49,7 @@ class _UploadState extends State<Upload> {
 
   handleChooseFromGallery() async {
     Navigator.pop(context);
+    // ignore: deprecated_member_use
     File file = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       this.file = file;
