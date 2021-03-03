@@ -23,7 +23,8 @@ class Upload extends StatefulWidget {
   _UploadState createState() => _UploadState();
 }
 
-class _UploadState extends State<Upload> {
+class _UploadState extends State<Upload>
+    with AutomaticKeepAliveClientMixin<Upload> {
   TextEditingController captionController = TextEditingController();
   TextEditingController locationController = TextEditingController();
 
@@ -299,10 +300,13 @@ class _UploadState extends State<Upload> {
     String formattedAddress = "${placemark.locality}, ${placemark.country}";
     locationController.text = formattedAddress;
   }
+  
+  bool get wantKeepAlive => true;
 
-  //if null
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return file == null ? buildSplashScreen() : buildUploadForm();
   }
 }

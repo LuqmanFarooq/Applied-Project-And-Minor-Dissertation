@@ -61,7 +61,7 @@ class _SearchState extends State<Search> {
     );
   }
 
-  buildNoContent() {
+ Container buildNoContent() {
     // for resizing the image in the horizontal orientation of the device
     final Orientation orientation = MediaQuery.of(context).orientation;
     return Container(

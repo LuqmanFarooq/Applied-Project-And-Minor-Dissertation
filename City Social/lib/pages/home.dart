@@ -104,8 +104,6 @@ class _HomeState extends State<Home> {
     }
 
     currentUser = User.fromDocument(doc);
-    print(currentUser);
-    print(currentUser.username);
   }
 
   @override

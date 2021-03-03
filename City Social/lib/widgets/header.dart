@@ -5,7 +5,7 @@ AppBar header(context,
   return AppBar(
     automaticallyImplyLeading: removeBackButton ? false : true,
     title: Text(
-      isAppTitle ? "City Social" : titleText,
+      isAppTitle ? "FlutterShare" : titleText,
       style: TextStyle(
         color: Colors.white,
         fontFamily: isAppTitle ? "Signatra" : "",
@@ -17,4 +17,3 @@ AppBar header(context,
     backgroundColor: Theme.of(context).accentColor,
   );
 }
-

@@ -1,15 +1,12 @@
-import 'package:flutter/material.dart';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:CitySocial/pages/home.dart';
 import 'package:CitySocial/widgets/header.dart';
 import 'package:CitySocial/widgets/progress.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'home.dart';
 
 class Comments extends StatefulWidget {
-  //create named argument as in post.dart
   final String postId;
   final String postOwnerId;
   final String postMediaUrl;
@@ -39,7 +36,7 @@ class CommentsState extends State<Comments> {
     this.postOwnerId,
     this.postMediaUrl,
   });
-  //fetch comments in realtime 
+
   buildComments() {
     return StreamBuilder(
         stream: commentsRef
@@ -51,7 +48,6 @@ class CommentsState extends State<Comments> {
           if (!snapshot.hasData) {
             return circularProgress();
           }
-          //deserialize
           List<Comment> comments = [];
           snapshot.data.documents.forEach((doc) {
             comments.add(Comment.fromDocument(doc));
@@ -63,7 +59,6 @@ class CommentsState extends State<Comments> {
   }
 
   addComment() {
-//populate CoomentRef in firestore through home.dart same as user and post
     commentsRef.document(postId).collection("comments").add({
       "username": currentUser.username,
       "comment": commentController.text,
@@ -71,7 +66,8 @@ class CommentsState extends State<Comments> {
       "avatarUrl": currentUser.photoUrl,
       "userId": currentUser.id,
     });
-   bool isNotPostOwner = postOwnerId != currentUser.id;
+    //if post comment done by Owner then bool not to show 
+    bool isNotPostOwner = postOwnerId != currentUser.id;
     if (isNotPostOwner) {
       activityFeedRef.document(postOwnerId).collection('feedItems').add({
         "type": "comment",
@@ -113,7 +109,6 @@ class CommentsState extends State<Comments> {
 }
 
 class Comment extends StatelessWidget {
-  //deserialize indiviually same as we did in user and post
   final String username;
   final String userId;
   final String avatarUrl;
@@ -147,7 +142,6 @@ class Comment extends StatelessWidget {
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(avatarUrl),
           ),
-          //from pubspecs import timago as it is 
           subtitle: Text(timeago.format(timestamp.toDate())),
         ),
         Divider(),

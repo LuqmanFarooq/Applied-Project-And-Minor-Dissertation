@@ -1,13 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:CitySocial/pages/home.dart';
 import 'package:CitySocial/pages/post_screen.dart';
 import 'package:CitySocial/pages/profile.dart';
 import 'package:CitySocial/widgets/header.dart';
 import 'package:CitySocial/widgets/progress.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
-import 'home.dart';
 
 class ActivityFeed extends StatefulWidget {
   @override
@@ -25,7 +24,7 @@ class _ActivityFeedState extends State<ActivityFeed> {
     List<ActivityFeedItem> feedItems = [];
     snapshot.documents.forEach((doc) {
       feedItems.add(ActivityFeedItem.fromDocument(doc));
-      // print('Activity Feed Item: ${doc.data}');
+       print('Activity Feed Item: ${doc.data}');
     });
     return feedItems;
   }
@@ -37,16 +36,16 @@ class _ActivityFeedState extends State<ActivityFeed> {
       appBar: header(context, titleText: "Activity Feed"),
       body: Container(
           child: FutureBuilder(
-            future: getActivityFeed(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return circularProgress();
-              }
-              return ListView(
-                children: snapshot.data,
-              );
-            },
-          )),
+        future: getActivityFeed(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return circularProgress();
+          }
+          return ListView(
+            children: snapshot.data,
+          );
+        },
+      )),
     );
   }
 }

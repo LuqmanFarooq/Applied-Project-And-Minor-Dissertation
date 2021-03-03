@@ -1,17 +1,15 @@
 import 'dart:async';
 
+import 'package:animator/animator.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:CitySocial/models/user.dart';
 import 'package:CitySocial/pages/activity_feed.dart';
 import 'package:CitySocial/pages/comments.dart';
 import 'package:CitySocial/pages/home.dart';
 import 'package:CitySocial/widgets/custom_image.dart';
 import 'package:CitySocial/widgets/progress.dart';
-import 'package:animator/animator.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-
-import '../pages/home.dart';
 
 class Post extends StatefulWidget {
   final String postId;
