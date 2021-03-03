@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:CitySocial/models/user.dart';
+import 'package:CitySocial/pages/comments.dart';
 import 'package:CitySocial/pages/home.dart';
 import 'package:CitySocial/widgets/custom_image.dart';
 import 'package:CitySocial/widgets/progress.dart';
@@ -220,9 +221,17 @@ class _PostState extends State<Post> {
               ),
             ),
             //to separate likes and comments buttons
-            Padding(padding: EdgeInsets.only(right: 20)),
+            Padding(padding: EdgeInsets.only(right: 20.0)),
             GestureDetector(
-              onTap: () => print('show comments'),
+              //erxecute showComments function onTap 
+              onTap: () => showComments(
+                //push to comments page
+                context,
+                //aruguments
+                postId: postId,
+                ownerId: ownerId,
+                mediaUrl: mediaUrl,
+              ),
               child: Icon(
                 Icons.chat,
                 size: 28.0,
@@ -281,4 +290,15 @@ class _PostState extends State<Post> {
       ],
     );
   }
+}
+
+showComments(BuildContext context,
+    {String postId, String ownerId, String mediaUrl}) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
+    return Comments(
+      postId: postId, 
+      postOwnerId: ownerId,
+      postMediaUrl: mediaUrl,
+    );
+  }));
 }

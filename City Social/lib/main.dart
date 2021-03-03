@@ -1,9 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:CitySocial/pages/home.dart';
 
 void main() {
+
   runApp(MyApp());
-}
+} 
 
 class MyApp extends StatelessWidget {
   @override
