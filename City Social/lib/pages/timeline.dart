@@ -12,12 +12,9 @@ class Timeline extends StatefulWidget {
 class _TimelineState extends State<Timeline> {
   @override
   Widget build(context) {
-	// for app bar we are using aur header widget located in widgets folder
     return Scaffold(
-      appBar: header(context, isAppTitile: true),
+      appBar: header(context, isAppTitle: true),
       body: Text('Timeline'),
     );
   }
 }
-
-

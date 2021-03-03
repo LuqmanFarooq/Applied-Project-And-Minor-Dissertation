@@ -111,10 +111,12 @@ class _ProfileState extends State<Profile> {
   }
 
   buildProfileButton() {
-    // on viewing user's own profile user should see edit profile button else follow or unfollow button
+    // viewing your own profile - should show edit profile button
     bool isProfileOwner = currentUserId == widget.profileId;
     if (isProfileOwner) {
       return buildButton(text: "Edit Profile", function: editProfile);
+    } else {
+      return Text('button');
     }
   }
 

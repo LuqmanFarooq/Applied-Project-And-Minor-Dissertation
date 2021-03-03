@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:CitySocial/models/user.dart';
+import 'package:CitySocial/pages/activity_feed.dart';
 import 'package:CitySocial/pages/comments.dart';
 import 'package:CitySocial/pages/home.dart';
 import 'package:CitySocial/widgets/custom_image.dart';
@@ -115,7 +116,7 @@ class _PostState extends State<Post> {
           ),
           // if someone taps on an username we want to show their profile
           title: GestureDetector(
-            onTap: () => print('will show profile'),
+            onTap: () => showProfile(context, profileId: user.id),
             child: Text(
               user.username,
               style: TextStyle(
@@ -146,6 +147,8 @@ class _PostState extends State<Post> {
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': false});
+          //isLiked been taken away
+          removeLikeFromActivityFeed();
       setState(() {
         likesCount -= 1;
         isLiked = false;
@@ -160,6 +163,8 @@ class _PostState extends State<Post> {
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': true});
+          //isLiked been added 
+          addLikeToActivityFeed();
       setState(() {
         likesCount += 1;
         isLiked = true;
@@ -173,6 +178,43 @@ class _PostState extends State<Post> {
       });
     }
   }
+
+    addLikeToActivityFeed() {
+    // add a notification to the postOwner's activity feed only if comment made by OTHER user (to avoid getting notification for our own like)
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
+      activityFeedRef
+          .document(ownerId)
+          .collection("feedItems")
+          .document(postId)
+          .setData({
+        "type": "like",
+        "username": currentUser.username,
+        "userId": currentUser.id,
+        "userProfileImg": currentUser.photoUrl,
+        "postId": postId,
+        "mediaUrl": mediaUrl,
+        "timestamp": timestamp,
+      });
+    }
+  }
+    removeLikeFromActivityFeed() {
+      //deleting data
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
+      activityFeedRef
+          .document(ownerId)
+          .collection("feedItems")
+          .document(postId)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          doc.reference.delete();
+        }
+      });
+    }
+  }
+
 
   buildPostImage() {
     return GestureDetector(
