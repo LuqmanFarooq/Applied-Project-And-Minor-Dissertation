@@ -10,21 +10,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'activity_feed.dart';
+
 class Search extends StatefulWidget {
   @override
   _SearchState createState() => _SearchState();
 }
 
 class _SearchState extends State<Search> {
-
 // to clear the text in the input field
   TextEditingController searchController = TextEditingController();
 
   Future<QuerySnapshot> searchResultsFuture;
-// created handleSearch funtion going to take userRef from home after import 
+// created handleSearch funtion going to take userRef from home after import
   handleSearch(String query) {
     Future<QuerySnapshot> users = usersRef
-    //execute string query
+        //execute string query
         .where("displayName", isGreaterThanOrEqualTo: query)
         .getDocuments();
     setState(() {
@@ -61,7 +62,7 @@ class _SearchState extends State<Search> {
     );
   }
 
- Container buildNoContent() {
+  Container buildNoContent() {
     // for resizing the image in the horizontal orientation of the device
     final Orientation orientation = MediaQuery.of(context).orientation;
     return Container(
@@ -89,6 +90,7 @@ class _SearchState extends State<Search> {
       ),
     );
   }
+
 //execute buildSearchResult which passes searchResultsFuture
   buildSearchResults() {
     // we are resolving our search results feature with our future builder
@@ -103,7 +105,7 @@ class _SearchState extends State<Search> {
           snapshot.data.documents.forEach((doc) {
             // for each user document that we get we need to deserialize it
             User user = User.fromDocument(doc);
-            UserResult searchResult =UserResult(user);
+            UserResult searchResult = UserResult(user);
             // wrapping into text widget and  addding the result to the searchResults list
             searchResults.add(searchResult);
           });
@@ -135,26 +137,35 @@ class UserResult extends StatelessWidget {
     //insted of text widget retur conatiner with its own properties
     return Container(
       color: Theme.of(context).primaryColor.withOpacity(0.7),
-      child: Column(children: <Widget>[
-        GestureDetector(
-          //onTap can be used as userProfile page when created
-          onTap: () => print('tapped'),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.grey,
-              //used CachedNetworkImagedProvider instead of NetworkImage widget to save and display 
-              backgroundImage: CachedNetworkImageProvider(user.photoUrl),
+      child: Column(
+        children: <Widget>[
+          GestureDetector(
+            //onTap can be used as userProfile page when created
+            onTap: () => showProfile(context, profileId: user.id),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.grey,
+                //used CachedNetworkImagedProvider instead of NetworkImage widget to save and display
+                backgroundImage: CachedNetworkImageProvider(user.photoUrl),
+              ),
+              title: Text(
+                user.displayName,
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                user.username,
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-            title: Text(user.displayName, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-            subtitle: Text(user.username, style: TextStyle(color: Colors.white),),
           ),
-        ),
-        //divider from the above single result to multiple result from search incase
-        Divider(
-          height: 2.0,
-          color: Colors.white54,
-        ),
-      ],),
+          //divider from the above single result to multiple result from search incase
+          Divider(
+            height: 2.0,
+            color: Colors.white54,
+          ),
+        ],
+      ),
     );
   }
 }
