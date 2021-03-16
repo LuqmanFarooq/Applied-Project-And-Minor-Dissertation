@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 // refrencing firebase admin package and setting it to admin
 const admin =  require('firebase-admin');
+const { Change } = require("firebase-functions");
 admin.initializeApp();
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -70,5 +71,104 @@ exports.onCreateFollower = functions.firestore
         if(doc.exists) {
             doc.ref.delete();
         }
+    });
+ });
+// when a post is created,we add post to timeline of each follower (of post owner)
+ exports.onCreatePost = functions.firestore
+ .document('/posts/{userId}/userPosts/{postId}')
+ .onCreate(async (snapshot, context) => {
+    const postCreated = snapshot.data();
+    const userId = context.params.userId;
+    const postId = context.params.postId;
+
+    // step 1 is to get all the followers of the user who made the post
+    const userFollowersRef = admin
+    .firestore()
+    .collection("followers")
+    .doc(userId)
+    .collection('userFollowers');
+
+    const querySnapshot = await userFollowersRef.get();
+
+    //2nd step is to add new post to each followers timeline
+    querySnapshot.forEach(doc => {
+        const followerId = doc.id;
+
+        admin
+        .firestore()
+        .collection('timeline')
+        .doc(followerId)
+        .collection('timelinePosts')
+        .doc(postId)
+        .set(postCreated);
+    });
+ });
+
+
+ exports.onUpdatePost = functions.firestore
+ .document('/posts/{userId}/userPosts/{postId}')
+ .onUpdate(async (Change , context) => {
+    const postUpdated = Change.after.data();
+    const userId = context.params.userId;
+    const postId = context.params.postId;
+
+    // step 1 is to get all the followers of the user who made the post
+    const userFollowersRef = admin
+    .firestore()
+    .collection("followers")
+    .doc(userId)
+    .collection('userFollowers');
+
+    const querySnapshot = await userFollowersRef.get();
+
+    //2nd step is to update each post in each followers timeline
+    querySnapshot.forEach(doc => {
+        const followerId = doc.id;
+
+        admin
+        .firestore()
+        .collection('timeline')
+        .doc(followerId)
+        .collection('timelinePosts')
+        .doc(postId)
+        .get().then(doc => {
+            if(doc.exists) {
+                doc.ref.update(postUpdated);
+            }
+        });
+    });
+ });
+
+ exports.onDeletePost = functions.firestore
+ .document('/posts/{userId}/userPosts/{postId}')
+ .onDelete(async (snapshot,context) => {
+
+    const userId = context.params.userId;
+    const postId = context.params.postId;
+
+    // step 1 is to get all the followers of the user who made the post
+    const userFollowersRef = admin
+    .firestore()
+    .collection("followers")
+    .doc(userId)
+    .collection('userFollowers');
+
+    const querySnapshot = await userFollowersRef.get();
+
+    //2nd step is to delete each post in each followers timeline
+    querySnapshot.forEach(doc => {
+        const followerId = doc.id;
+
+        admin
+        .firestore()
+        .collection('timeline')
+        .doc(followerId)
+        .collection('timelinePosts')
+        .doc(postId)
+        .get().then(doc => {
+            if(doc.exists) {
+                doc.ref.delete();
+            }
+        });
     });
  });
