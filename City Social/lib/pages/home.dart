@@ -65,11 +65,11 @@ class _HomeState extends State<Home> {
     });
   }
 
-  handleSignIn(GoogleSignInAccount account) {
+  handleSignIn(GoogleSignInAccount account) async {
     //if Detect when user SignIn
     if (account != null) {
       //execute the function in fireStore
-      createUserInFirestore();
+      await createUserInFirestore();
 
       setState(() {
         isAuth = true;
