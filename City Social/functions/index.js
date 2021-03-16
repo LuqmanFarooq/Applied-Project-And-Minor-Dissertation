@@ -10,7 +10,8 @@ admin.initializeApp();
 //   response.send("Hello from Firebase!");
 // });
 
-// function to listen to when followers are created 
+// function to listen to when followers are created and then creates a timeline collection which contains 
+// all posts of the followed user
 //& using wildcard syntax as we dont know what the user id is going to be
 exports.onCreateFollower = functions.firestore
 .document("/followers/{userId}/userFollowers/{followerId}")
@@ -46,3 +47,28 @@ exports.onCreateFollower = functions.firestore
         }
     });
 });
+
+
+ // fuction that deletes all the user posts of the user that is unfollowed
+ exports.onDeleteFollower = functions.firestore
+ .document("/followers/{userId}/userFollowers/{followerId}")
+ .onDelete(async (snapshot,context) => {
+    console.log("Follower Deleted",snapshot.id);
+
+    const userId = context.params.userId;
+    const followerId = context.params.followerId;
+    // deleting posts by matching the owner id in the posts with the user id that is unfollowed
+    const timelinePostsRef = admin
+    .firestore()
+    .collection('timeline')
+    .doc(followerId)
+    .collection('timelinePosts')
+    .where("ownerId","==",userId);
+
+    const querySnapshot = await timelinePostsRef.get();
+    querySnapshot.forEach(doc => {
+        if(doc.exists) {
+            doc.ref.delete();
+        }
+    });
+ });
