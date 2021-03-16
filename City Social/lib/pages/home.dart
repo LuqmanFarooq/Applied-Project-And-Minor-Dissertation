@@ -2,6 +2,7 @@ import 'package:CitySocial/models/user.dart';
 import 'package:CitySocial/pages/activity_feed.dart';
 import 'package:CitySocial/pages/profile.dart';
 import 'package:CitySocial/pages/search.dart';
+import 'package:CitySocial/pages/timeline.dart';
 import 'package:CitySocial/pages/upload.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -10,9 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:CitySocial/pages/create_account.dart';
 
-
 // import for google sign
-import 'create_account.dart'; 
+import 'create_account.dart';
 
 //enable us to use no. of methods eg. login/logout
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -24,6 +24,7 @@ final commentsRef = Firestore.instance.collection("posts");
 final activityFeedRef = Firestore.instance.collection("feed");
 final followersRef = Firestore.instance.collection("followers");
 final followingRef = Firestore.instance.collection("following");
+final timelineRef = Firestore.instance.collection("timeline");
 final DateTime timestamp = DateTime.now();
 // varaible to store userdata
 User currentUser;
@@ -148,11 +149,7 @@ class _HomeState extends State<Home> {
       body: PageView(
         // building a navigation bar with buttons
         children: <Widget>[
-          // Timeline(),
-          RaisedButton(
-            child: Text('Logout'),
-            onPressed: logout,
-          ),
+          Timeline(currentUser: currentUser),
           ActivityFeed(),
           //pass to currentUser argument
           Upload(currentUser: currentUser),
