@@ -107,6 +107,7 @@ class _PostState extends State<Post> {
         }
         // deserializing data
         User user = User.fromDocument(snapshot.data);
+        bool isPostOwner = currentUserId == ownerId;
         return ListTile(
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(user.photoUrl),
@@ -125,28 +126,98 @@ class _PostState extends State<Post> {
           ),
           subtitle: Text(location),
           // to delete the post
-          trailing: IconButton(
-            onPressed: () => print('delete post'),
-            icon: Icon(Icons.more_vert),
-          ),
+          // if its the post owner t will se the icon to delete post otherwise not
+          trailing: isPostOwner
+              ? IconButton(
+                  onPressed: () => handleDeletePost(context),
+                  icon: Icon(Icons.more_vert),
+                )
+              : Text(""),
         );
       },
     );
   } // postheaderfunction
 
-  handleLikePost(){
+  handleDeletePost(BuildContext parentContext) {
+    return showDialog(
+        context: parentContext,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text("Confirm Removing this Post"),
+            children: <Widget>[
+              SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    deletePost();
+                  },
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  )),
+              SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel'))
+            ],
+          );
+        });
+  } // handledeletepost
+
+//  To delete post , owner Id  and current user id must be equal, so they can be used interchangeably
+  deletePost() async {
+// first we delete the post itself
+    postsRef
+        .document(ownerId)
+        .collection('userPosts')
+        .document(postId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    // 2nd we delete the uploaded image for the post
+    // we added a child path when we created the image which was post_$postId.jpg
+    // from this post id we will be select the exact image to be deleted
+    storageRef.child("post_$postId.jpg").delete();
+
+    // 3rd we delete all the activity feed notifications
+    QuerySnapshot activityFeedSnapshot = await activityFeedRef
+        .document(ownerId)
+        .collection("feedItems")
+        .where('postId', isEqualTo: postId)
+        .getDocuments();
+
+    activityFeedSnapshot.documents.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    // and finally deleting all comments
+    QuerySnapshot commentsSnapshot = await commentsRef
+        .document(postId)
+        .collection("comments")
+        .getDocuments();
+
+    commentsSnapshot.documents.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+  }
+
+  handleLikePost() {
     //if the user isLiked the post it will return true
     bool _isLiked = likes[currentUserId] == true;
     //in that case the condition is
-   if (_isLiked) {
-     //update the post to updateDate in firestore
+    if (_isLiked) {
+      //update the post to updateDate in firestore
       postsRef
           .document(ownerId)
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': false});
-          //isLiked been taken away
-          removeLikeFromActivityFeed();
+      //isLiked been taken away
+      removeLikeFromActivityFeed();
       setState(() {
         likesCount -= 1;
         isLiked = false;
@@ -154,15 +225,15 @@ class _PostState extends State<Post> {
       });
     }
     //if it wasnt isLiked before
-     else if (!_isLiked) {
-       //update the post to updateDate in firestore with flip conditions
+    else if (!_isLiked) {
+      //update the post to updateDate in firestore with flip conditions
       postsRef
           .document(ownerId)
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': true});
-          //isLiked been added 
-          addLikeToActivityFeed();
+      //isLiked been added
+      addLikeToActivityFeed();
       setState(() {
         likesCount += 1;
         isLiked = true;
@@ -177,7 +248,7 @@ class _PostState extends State<Post> {
     }
   }
 
-    addLikeToActivityFeed() {
+  addLikeToActivityFeed() {
     // add a notification to the postOwner's activity feed only if comment made by OTHER user (to avoid getting notification for our own like)
     bool isNotPostOwner = currentUserId != ownerId;
     if (isNotPostOwner) {
@@ -196,8 +267,9 @@ class _PostState extends State<Post> {
       });
     }
   }
-    removeLikeFromActivityFeed() {
-      //deleting data
+
+  removeLikeFromActivityFeed() {
+    //deleting data
     bool isNotPostOwner = currentUserId != ownerId;
     if (isNotPostOwner) {
       activityFeedRef
@@ -212,7 +284,6 @@ class _PostState extends State<Post> {
       });
     }
   }
-
 
   buildPostImage() {
     return GestureDetector(
@@ -238,8 +309,6 @@ class _PostState extends State<Post> {
                   ),
                 )
               : Text(""),
-
-
         ],
       ),
     );
@@ -263,7 +332,7 @@ class _PostState extends State<Post> {
             //to separate likes and comments buttons
             Padding(padding: EdgeInsets.only(right: 20.0)),
             GestureDetector(
-              //erxecute showComments function onTap 
+              //erxecute showComments function onTap
               onTap: () => showComments(
                 //push to comments page
                 context,
@@ -336,7 +405,7 @@ showComments(BuildContext context,
     {String postId, String ownerId, String mediaUrl}) {
   Navigator.push(context, MaterialPageRoute(builder: (context) {
     return Comments(
-      postId: postId, 
+      postId: postId,
       postOwnerId: ownerId,
       postMediaUrl: mediaUrl,
     );
