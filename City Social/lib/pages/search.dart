@@ -17,7 +17,8 @@ class Search extends StatefulWidget {
   _SearchState createState() => _SearchState();
 }
 
-class _SearchState extends State<Search> {
+class _SearchState extends State<Search>
+    with AutomaticKeepAliveClientMixin<Search> {
 // to clear the text in the input field
   TextEditingController searchController = TextEditingController();
 
@@ -116,8 +117,12 @@ class _SearchState extends State<Search> {
         });
   }
 
+// to preserve state for mixin
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: Theme.of(context).accentColor.withOpacity(0.8),
       appBar: buildSearchField(),

@@ -300,7 +300,7 @@ class _UploadState extends State<Upload>
     String formattedAddress = "${placemark.locality}, ${placemark.country}";
     locationController.text = formattedAddress;
   }
-  
+
   bool get wantKeepAlive => true;
 
   @override
