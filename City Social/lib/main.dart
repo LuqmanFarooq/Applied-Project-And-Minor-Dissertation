@@ -1,8 +1,6 @@
-
 import 'package:CitySocial/pages/home.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 
 void main() {
   /*Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then((_) {

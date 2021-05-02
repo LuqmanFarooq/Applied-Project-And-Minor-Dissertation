@@ -119,7 +119,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    // disposing the controller when we are no on the hone page and we dont need it
+    // disposing the controller when we are not on the home page and we dont need it
     pageController.dispose();
     super.dispose();
   }

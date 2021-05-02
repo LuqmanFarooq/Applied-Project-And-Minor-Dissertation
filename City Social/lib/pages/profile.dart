@@ -19,7 +19,7 @@ class Profile extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> { 
+class _ProfileState extends State<Profile> {
   final String currentUserId = currentUser?.id;
   bool isLoading = false;
   //follow
@@ -30,7 +30,6 @@ class _ProfileState extends State<Profile> {
   List<Post> posts = [];
   String postOrientation = "grid";
 // fetching posts
-
 
   @override
   void initState() {
@@ -112,7 +111,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-// to return edir profile page
+// to return edit profile page
   editProfile() {
     // passing context and making route using materialpageroute
     Navigator.push(
@@ -157,22 +156,21 @@ class _ProfileState extends State<Profile> {
     if (isProfileOwner) {
       return buildButton(
         text: "Edit Profile",
-         function: editProfile,
-         );
-    } 
-    else if (isFollowing){
+        function: editProfile,
+      );
+    } else if (isFollowing) {
       return buildButton(
         text: "Unfollow",
-         function: handleUnfollowUser,
-      ); 
-
+        function: handleUnfollowUser,
+      );
     } else if (!isFollowing) {
       return buildButton(
         text: "Follow",
-        function: handleFollowUser, 
+        function: handleFollowUser,
       );
     }
   }
+
   handleUnfollowUser() {
     setState(() {
       isFollowing = false;
@@ -242,7 +240,6 @@ class _ProfileState extends State<Profile> {
       "timestamp": timestamp,
     });
   }
-  
 
   //header
   buildProfileHeader() {
