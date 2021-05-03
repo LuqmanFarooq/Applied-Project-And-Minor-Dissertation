@@ -9,6 +9,7 @@
             "cwd": "City Social",
             "request": "launch",
             "type": "dart"
+			"flutterMode": "profile"
         }
     ]
 }
