@@ -24,7 +24,7 @@ Flutter ia a framework and dart is the language that it supports and Firebase en
 - Display post as grid or list option on the profile page.
 - Realtime massaging as comments on posts.
 - Like posts with heart animation.
-- Activity Feed Notifications with push notifications.
+- Activity Feed Notifications.
 - Search users with their name.
 - Edit profile Information.
 - Delete posts and its related data.
@@ -32,7 +32,11 @@ Flutter ia a framework and dart is the language that it supports and Firebase en
 - Loading widgets such as spinners
 - snackbar notifications
 
-## How to Use (Instructions)
+## Installing and Running Instructions
+- Navigate to the Repository and then to the “City Social Apk“ folderin root.
+- Download the release-apk file.
+- copy it to any android phone.
+- install the apk and give permission to trust app installation from un-known sources.
 - Launch the app using the app icon
 - on the Login Splash Screen tap on the sign in with Google button and enter you Google account credentials and login.
 - upon first time Login with new Google Account you will be taken to Username screen Enter a valid username.
