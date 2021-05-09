@@ -51,3 +51,8 @@ Flutter ia a framework and dart is the language that it supports and Firebase en
 
 After going with one of the options above wirte image caption and location or click on use current location to automatically detect current loaction and tap post button in the top right corner to post it.
 - Tap on chat icon below an image beside the heat button to open comments of a photo and tap on write a comment placeholder of a text box the the bottom to open keyboard and write comment and tap post button beside it to post that comment.
+
+## ScreenCast - Project Demo
+To view the screencast please navigate to the screen cast folder in the repo or click on the link below and download the .mp4 file
+
+[Link to Screencast](https://github.com/LuqmanFarooq/Applied-Project-And-Minor-Dissertation/blob/main/Screen%20Cast/Project-Screen-Cast.mp4)
